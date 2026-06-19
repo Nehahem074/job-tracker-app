@@ -1,54 +1,56 @@
 // components/Navbar.jsx
 
-import { Link } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, FileText, Sparkles } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+
+const links = [
+  { to: '/',          label: 'Dashboard' },
+  { to: '/jobs',      label: 'Jobs' },
+  { to: '/resume',    label: 'Resume' },
+  { to: '/ai',        label: 'AI Tools' },
+  { to: '/analytics', label: 'Analytics' },
+]
 
 export default function Navbar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
-    <nav className="bg-white border-b sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold">
-            JT
+    <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
+        <div className="flex items-center gap-8">
+          <span className="font-semibold text-brand-600 text-lg">JobTracker</span>
+          <div className="hidden md:flex items-center gap-1">
+            {links.map(l => (
+              <NavLink
+                key={l.to}
+                to={l.to}
+                end={l.to === '/'}
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-brand-50 text-brand-600'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`
+                }
+              >
+                {l.label}
+              </NavLink>
+            ))}
           </div>
-          <span className="font-bold text-lg">
-            JobTracker AI
-          </span>
         </div>
-
-        <div className="flex gap-6">
-          <Link to="/" className="flex items-center gap-2">
-            <LayoutDashboard size={18}/>
-            Dashboard
-          </Link>
-
-          <Link to="/jobs" className="flex items-center gap-2">
-            <Briefcase size={18}/>
-            Jobs
-          </Link>
-
-          <Link to="/resume" className="flex items-center gap-2">
-            <FileText size={18}/>
-            Resume
-          </Link>
-
-          <Link to="/ai" className="flex items-center gap-2">
-            <Sparkles size={18}/>
-            AI
-          </Link>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500 hidden sm:block">{user?.name}</span>
+          <button onClick={handleLogout} className="btn-secondary text-sm">
+            Logout
+          </button>
         </div>
-
-        <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-2 rounded-xl"
-        >
-          Logout
-        </button>
       </div>
     </nav>
-  );
+  )
 }
