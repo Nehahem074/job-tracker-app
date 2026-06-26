@@ -4,12 +4,16 @@ const cors       = require('cors')
 const passport   = require('passport')
 const cron       = require('node-cron')
 const nodemailer = require('nodemailer')
-require('dotenv').config()
+require('dotenv').config();
 
-const app = express()
+console.log("CLIENT_URL =", JSON.stringify(process.env.CLIENT_URL));
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }))
+const app = express();
+
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.json())
 app.use(passport.initialize())
 
